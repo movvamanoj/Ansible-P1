@@ -2,8 +2,9 @@
 #                                       vars.yml                                                                   # 
 #                                                                                                                  #
 #     #Temporary Folder                                                                                            #
-#     temp_folder: "C:\\Temp\\win-powershell"                                                                      #
-#     temp_path: "C:\\Temp"                                                                                        #
+#    PythonInstaller_temp_folder: "C:\\Temp\\PythonInstaller"                                                                      #
+#    PythonInstaller_temp_path: "C:\\Temp\\PythonInstaller" 
+#    python_installer: "C:\\Temp\\PythonInstaller\\python_installer.exe"                                                                                       #
 #                                                                                                                  #
 #    #Python Configuration                                                                                         #
 #     ansible_python_interpreter: "C:\\Python312\\python.exe"                                                      #
@@ -20,12 +21,12 @@
 
     - name: Check if Temp folder exists
       win_stat:
-          path: "{{ temp_path }}"
+      path: "{{ PythonInstaller_temp_path }}"
       register: temp_folder_stat
 
     - name: Create Temp folder if it doesn't exist
       win_file:
-        path: "{{ temp_path }}"
+        path: "{{ PythonInstaller_temp_path }}"
         state: directory
       when: not temp_folder_stat.stat.exists
   

@@ -1,22 +1,22 @@
 ########################## vars.yml ######################################################################
 ##########################  Temporary Folder #############################################################
-#temp_folder: "C:\\Temp\\Ansible-P1"
-#temp_path: "C:\\Temp"
+#temp_folder_GitInstaller: "C:\\Temp\\GitInstaller"
+#temp_path_GitInstaller: "C:\\Temp\\GitInstaller"
 ########################## Git Configuration ##############################################################
 #git_installer_url: "https://github.com/git-for-windows/git/releases/download/v2.43.0.windows.1/Git-2.43.0-64-bit.exe"
 #git_install_directory: "C:\\Program Files\\Git"
 ######################### Installer Paths #################################################################
-#git_installer: "C:\\Temp\\GitInstaller.exe"
+#git_installer_path: "C:\\Temp\\GitInstaller\\GitInstaller.exe"
 ##########################################################################################################
 
     - name: Check if Temp folder exists
       win_stat:
-          path: "{{ temp_path }}"
+          path: "{{ temp_path_GitInstaller }}"
       register: temp_folder_stat
 
     - name: Create Temp folder if it doesn't exist
       win_file:
-        path: "{{ temp_path }}"
+        path: "{{ temp_path_GitInstaller }}"
         state: directory
       when: not temp_folder_stat.stat.exists
 
