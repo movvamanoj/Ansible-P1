@@ -1,0 +1,17 @@
+
+
+
+---
+- name: Install and Configure Software on Windows
+  hosts: win
+  gather_facts: false
+  vars_files:
+    - vars.yml
+
+  tasks:
+
+    - include_tasks: tasks/PythonOnWin.yml
+    - include_tasks: tasks/GitOnWin.yml
+    - include_tasks: tasks/GitOnWin.yml        
+
+
