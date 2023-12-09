@@ -1,6 +1,3 @@
-
-
-
 ---
 - name: Install and Configure Software on Windows
   hosts: win

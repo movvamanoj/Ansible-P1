@@ -1,0 +1,9 @@
+# ---
+# - include_tasks: installgit.yml
+#   tags: install_git
+
+# - include_tasks: installpython.yml
+#   tags: install_python
+
+# - include_tasks: runtomcat.yml
+#   tags: run_tomcat
