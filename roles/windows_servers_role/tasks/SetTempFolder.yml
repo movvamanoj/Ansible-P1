@@ -1,0 +1,14 @@
+# group_vars/production/windows_servers/temp_folder_vars.yml
+# roles/windows_servers_role/tasks/SetTempFolder.yml
+# roles/windows_servers_role/tasks/SetTempFolder.yml
+---
+- name: Check if Temp folder exists
+  win_stat:
+    path: "{{ temp_path }}"
+  register: temp_folder_stat
+
+- name: Create Temp folder if it doesn't exist
+  win_file:
+    path: "{{ temp_path }}"
+    state: directory
+  when: not temp_folder_stat.stat.exists

@@ -1,0 +1,18 @@
+# ---
+# - name: Install common packages
+#   ansible.builtin.package:
+#     name: "{{ item }}"
+#     state: present
+#   loop:
+#     - vim
+#     - htop
+#   when: "'linux' in ansible_system"
+
+# - name: Install common packages
+#   ansible.builtin.win_chocolatey:
+#     name: "{{ item }}"
+#     state: present
+#   loop:
+#     - vim
+#     - htop
+#   when: "'windows' in ansible_system"

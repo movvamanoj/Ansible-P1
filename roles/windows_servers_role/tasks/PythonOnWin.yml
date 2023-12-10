@@ -1,0 +1,25 @@
+# group_vars/production/windows_servers/python_installer_vars.yml
+---
+- name: Check if Python is installed
+  win_shell: python --version
+  register: python_check
+  ignore_errors: true
+
+- name: Download Python installer
+  win_get_url:
+    url: "{{ python_installer_url }}"
+    dest: "{{ python_installer }}"
+  when: python_check.rc != 0
+
+- name: Install Python
+  win_shell: Start-Process -Wait -FilePath "{{ python_installer }}" -ArgumentList "/quiet", "InstallAllUsers=1", "PrependPath=1"
+  when: python_check.rc != 0
+
+- name: Check if Python is installed (after installation)
+  win_shell: Test-Path "{{ python_installation_check }}"
+  register: python_check_after_install
+  when: python_check.rc != 0
+
+- name: Delete Python installer
+  win_shell: Remove-Item -Path "{{ python_installer }}" -Force
+  when: python_check.rc != 0

@@ -1,0 +1,4 @@
+---
+database_servers:
+  - linux_database_server
+  - windows_database_server

@@ -1,0 +1,28 @@
+# current path: roles/windows_servers/tasks/main.yml
+# group_vars/production/windows_servers/main_tasks_vars.yml
+# control true or flase in main_tasks_vars.yml
+# include task variables to true, the task will execute | default(true)
+# include task variables to flase, the task will not execute | default(false)
+
+---
+- name: Include tasks for Setup Temp Folder on Windows
+  include_tasks: SetTempFolder.yml
+  when: include_tempfolder_tasks | default(true)
+
+- name: Include tasks for Python on Windows
+  include_tasks: PythonOnWin.yml
+  when: include_python_tasks | default(false)
+
+- name: Include tasks for Git on Windows
+  include_tasks: GitOnWin.yml
+  when: include_git_tasks | default(false)
+
+- name: Include tasks based on requirements
+  include_tasks: SetWinDriveLetter.yml
+  when: include_drive_letter_tasks | default(false)
+
+- name: Include tasks for setting up Windows disk
+  include_tasks: SetupAutoWinDisk.yml
+  when: include_setup_disk_tasks | default(false)
+
+

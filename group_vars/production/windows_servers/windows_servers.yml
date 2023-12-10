@@ -1,0 +1,63 @@
+# group_vars/production/windows_servers/windows_servers_vars.yml
+# ---
+# - include_vars: common_vars.yml
+# - include_vars: main_tasks_vars.yml
+# - include_vars: temp_folder_vars.yml
+# - include_vars: python_installer_vars.yml
+# - include_vars: git_installer_vars.yml
+# - include_vars: script_vars.yml
+
+
+# # Include common_vars.yml directly
+# common_vars:
+#   include_vars: common_vars.yml
+
+# # Include main_tasks_vars.yml directly
+# main_tasks_vars:
+#   include_vars: main_tasks_vars.yml
+
+# # Include temp_folder_vars.yml directly
+# temp_folder_vars:
+#   include_vars: temp_folder_vars.yml
+
+# # Include python_installer_vars.yml directly
+# python_installer_vars:
+#   include_vars: python_installer_vars.yml
+
+# # Include git_installer_vars.yml directly
+# git_installer_vars:
+#   include_vars: git_installer_vars.yml
+
+# # Include temp_folder_vars.yml directly
+# script_vars:
+#   include_vars: script_vars.yml
+
+
+
+
+
+
+
+
+############################ other way to define / using this way we can give common variables with in the file ################################
+# group_vars/production/windows_servers/windows_servers_vars.yml
+
+
+# main_tasks_vars: "{{ lookup('file', 'main_tasks_vars.yml') | from_yaml }}"
+
+# temp_folder_vars: "{{ lookup('file', 'temp_folder_vars.yml') | from_yaml }}"
+
+# python_installer_vars: "{{ lookup('file', 'python_installer_vars.yml') | from_yaml }}"
+
+# git_installer_vars: "{{ lookup('file', 'git_installer_vars.yml') | from_yaml }}"
+
+# script_vars: "{{ lookup('file', 'script_vars.yml') | from_yaml }}"
+
+# ansible_user: "{{ common_vars.ansible_user }}"
+# ansible_password: "{{ common_vars.ansible_password }}"
+# ansible_port: "{{ common_vars.ansible_port }}"
+# ansible_connection: "{{ common_vars.ansible_connection }}"
+# ansible_winrm_server_cert_validation: "{{ common_vars.ansible_winrm_server_cert_validation }}"
+# ansible_winrm_transport: "{{ common_vars.ansible_winrm_transport }}"
+# ansible_winrm_kerberos_delegation: "{{ common_vars.ansible_winrm_kerberos_delegation }}"
+# ansible_winrm_operation_timeout_sec: "{{ common_vars.ansible_winrm_operation_timeout_sec }}"

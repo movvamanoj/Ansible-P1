@@ -1,0 +1,6 @@
+# current path ./playbook/windows_servers_playbook.yml
+- name: Configure Windows Servers
+  hosts: windows_servers
+  gather_facts: yes
+  roles:
+    - windows_servers_role

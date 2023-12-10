@@ -1,0 +1,6 @@
+# group_vars/production/windows_servers/script_vars.yml
+
+SetDriveLetter_script_path: "\\ansible\\SetWinDriveLetter.ps1"
+SetDriveLetter_script_name: "SetWinDriveLetter.ps1"
+SetupAutoWinDisk_script_name: "SetupAutoWinDisk.ps1"
+SetupAutoWinDisk_script_path: "\\ansible\\SetupAutoWinDisk.ps1"

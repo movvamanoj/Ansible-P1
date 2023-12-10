@@ -1,0 +1,9 @@
+
+ansible_user: Administrator
+ansible_password: T)EW?lig%A?FQJlhp.Fr5d9a43kCzEeE
+ansible_port: 5986
+ansible_connection: winrm
+ansible_winrm_server_cert_validation: ignore
+ansible_winrm_transport: basic
+ansible_winrm_kerberos_delegation: true
+ansible_winrm_operation_timeout_sec: 60

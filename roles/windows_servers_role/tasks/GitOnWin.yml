@@ -1,0 +1,24 @@
+    - name: Check if Git is installed
+      win_command: git --version
+      register: git_check
+      ignore_errors: true
+
+    - name: Download Git installer
+      win_get_url:
+        url: "{{ git_installer_url }}"
+        dest: "{{ git_installer_path }}"
+      when: git_check.rc != 0
+
+    - name: Install Git
+      win_shell: Start-Process -Wait -FilePath "{{ git_installer_path }}" -ArgumentList "/VERYSILENT /NORESTART /SUPPRESSMSGBOXES"
+      when: git_check.rc != 0
+
+    - name: Check if Git is installed (after installation)
+      win_command: git --version
+      register: git_check_after_install
+      when: git_check.rc != 0
+
+    - name: Delete Git installer
+      win_shell: Remove-Item -Path "{{ git_installer_path }}" -Force
+      when: git_check.rc != 0
+

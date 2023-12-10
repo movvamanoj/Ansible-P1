@@ -57,3 +57,21 @@
 
 
 # ansible-playbook -i inventory/hosts.ini playbooks/setup_servers.yml
+
+# ways to get variable
+- name: Include common variables
+  include_vars: group_vars/production/windows_servers/common_vars.yml
+
+
+- name: Include common variables
+  include_vars:
+    file: "{{ item }}"
+  with_fileglob:
+    - "group_vars/production/windows_servers/*.yml"
+
+- name: Configure Windows Servers
+  hosts: windows_servers
+  vars_files:
+    - "group_vars/production/windows_servers/*.yml"
+  roles:
+    - windows_servers_role

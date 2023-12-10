@@ -1,0 +1,10 @@
+# ---
+# web_servers:
+#   - linux_web_server
+#   - windows_web_server
+
+# database_servers:
+#   - linux_database_server
+#   - windows_database_server
+
+# common_variable: "This is a variable common to all hosts in production."

@@ -1,0 +1,9 @@
+# group_vars/production/windows_servers/git_installer_vars.yml
+
+git_installer_url: "https://github.com/git-for-windows/git/releases/download/v2.43.0.windows.1/Git-2.43.0-64-bit.exe"
+git_installer_path: "{{ temp_path }}\\GitInstaller.exe"
+
+# Git Account Details
+git_repo_url: "https://github.com/movvamanoj/win-powershell.git"
+git_access_token: "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"
+

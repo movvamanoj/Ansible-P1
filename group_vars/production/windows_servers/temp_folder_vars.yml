@@ -1,0 +1,3 @@
+# group_vars/production/windows_servers/temp_folder_vars.yml
+temp_path: "C:\\Temp"
+temp_folder: "C:\\Temp\\win-powershell"
