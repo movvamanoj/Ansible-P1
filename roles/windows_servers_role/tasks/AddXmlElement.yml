@@ -1,0 +1,18 @@
+---
+    - name: Copy AddXmlElement.ps1 to temp
+      win_shell: |
+        Copy-Item -Path "{{ temp_folder }}{{ AddXmlElement_script_path }}" -Destination "{{ temp_path }}" -Force
+      args:
+        executable: powershell.exe
+
+    - name: Execute PowerShell script
+      win_shell: |
+        Set-ExecutionPolicy Bypass -Scope Process -Force
+        . "{{ temp_path }}\{{ AddXmlElement_script_name }}"
+      args:
+        executable: powershell.exe
+
+    - name: Delete AddXmlElement.ps1 PowerShell script file
+      win_shell: Remove-Item -Path "{{ temp_path }}\{{ AddXmlElement_script_name }}" -Force
+      args:
+        executable: powershell.exe

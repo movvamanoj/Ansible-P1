@@ -16,3 +16,14 @@ catch {
     Write-Host "Error: $_" -ForegroundColor Red
 }
 
+# Specify the current and desired drive letters
+# $oldDriveLetter = "G"
+# $newDriveLetter = "P"
+
+# Get the partition that corresponds to the current drive letter
+# $partition = Get-Partition -DriveLetter $oldDriveLetter
+
+# Change the drive letter to the new one
+# Set-Partition -DriveLetter $oldDriveLetter -NewDriveLetter $newDriveLetter -Confirm:$false
+
+

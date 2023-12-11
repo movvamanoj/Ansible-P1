@@ -1,6 +1,6 @@
 # current path: roles/windows_servers/tasks/main.yml
 # group_vars/production/windows_servers/main_tasks_vars.yml
-# control true or flase in main_tasks_vars.yml
+# control true or false in main_tasks_vars.yml
 # include task variables to true, the task will execute | default(true)
 # include task variables to flase, the task will not execute | default(false)
 
@@ -17,12 +17,38 @@
   include_tasks: GitOnWin.yml
   when: include_git_tasks | default(false)
 
-- name: Include tasks based on requirements
-  include_tasks: SetWinDriveLetter.yml
+- name: Include tasks for cloning ansible project from github
+  include_tasks: GitCloneAnsible.yml
+  when: include_GitCloneAnsible_tasks | default(false)
+
+- name: Include tasks to change drive letter
+  include_tasks: ChangeWinDriveLetter.yml
   when: include_drive_letter_tasks | default(false)
 
 - name: Include tasks for setting up Windows disk
   include_tasks: SetupAutoWinDisk.yml
   when: include_setup_disk_tasks | default(false)
 
+# - name: Include tasks for running test.yml on a different server
+#   include_tasks: test.yml
+#   delegate_to: other_server
+#   when: include_test_tasks | default(false)
+#   ignore_errors: true  # Ignore errors to prevent stopping the playbook on failure
+#   register: test_result  # Register the result of the test.yml task
 
+# - name: Include tasks for Add a line in DiskManagerConfig.xml
+#   include_tasks: AddXmlElement.yml
+#   when: 
+#     - include_AddXmlElement_tasks | default(false)
+#     - test_result is defined
+#     - test_result.failed == false  # Only execute if the test.yml task did not fail
+#     # - test_result.rc == 0  # Assumes that 0 indicates success in the return code of the test task
+
+
+- name: Include tasks for Add a line in DiskManagerConfig.xml
+  include_tasks: AddXmlElement.yml
+  when: include_AddXmlElement_tasks | default(false)
+
+- name: Include tasks for deleting/ removing cloned ansible project from Win
+  include_tasks: RMGitCloneAnsible.yml
+  when: include_RMGitCloneAnsible_tasks | default(false)
