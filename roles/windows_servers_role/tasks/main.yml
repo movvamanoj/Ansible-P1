@@ -29,19 +29,25 @@
   include_tasks: SetupAutoWinDisk.yml
   when: include_setup_disk_tasks | default(false)
 
-- name: Include tasks for running run_py_script.yml on python_servers
-  include_tasks: run_py_script.yml
-  when: include_run_py_script_tasks | default(false)
-  ignore_errors: true
-  register: test_result
+- name: Run tasks or skip based on the result of run_py_script.yml
+  block:
 
-- name: Include tasks for Add a line in DiskManagerConfig.xml (if test.yml succeeded)
-  include_tasks: AddXmlElement.yml
-  when:
-    - include_AddXmlElement_tasks | default(false)
-    - test_result is defined
-    - test_result.failed == false
-    - test_result.rc == 0
+    - name: Include tasks for running run_py_script.yml on python_servers
+      include_tasks: run_py_script.yml
+      when: include_run_py_script_tasks | default(false)
+      ignore_errors: true
+      register: run_py_script_result
+
+    - name: Set a flag based on the success of run_py_script.yml
+      set_fact:
+        run_py_script_succeeded: "{{ run_py_script_result is succeeded }}"
+
+  always:
+    - name: Include tasks for Add a line in DiskManagerConfig.xml
+      include_tasks: AddXmlElement.yml
+      when: include_AddXmlElement_tasks | default(false) and run_py_script_succeeded
+      ignore_errors: true
+
 
 # - name: Include tasks for Add a line in DiskManagerConfig.xml
 #   include_tasks: AddXmlElement.yml

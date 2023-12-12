@@ -38,6 +38,7 @@
         var: python_script_output.stdout_lines
       delegate_to: "{{ item }}"
       loop: "{{ groups['python_servers'] }}"
+      when: python_script_output is defined
 
     - name: Save Python script output to a file
       lineinfile:
