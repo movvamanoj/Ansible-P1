@@ -1,0 +1,39 @@
+---
+- hosts: localhost
+  gather_facts: false
+  tasks:
+
+    # - name: Display running processes before executing Python script
+    #   win_shell: Get-Process
+    #   register: processes_before
+    # - name: Display running processes before executing Python script
+    #   shell: ps aux | grep python
+    #   register: processes_before
+
+    - name: Run the Python script locally
+      command: python /home/mmanoj/Ansible-P1/roles/windows_servers_role/files/hello_world.py
+      register: python_script_output
+
+    # - name: Display running processes after executing Python script
+    #   win_shell: Get-Process
+    #   register: processes_after
+
+    # - name: Display running processes after executing Python script
+    #   shell: ps aux | grep python
+    #   register: processes_after
+
+    - name: Display Python script output
+      debug:
+        var: python_script_output.stdout_lines
+
+    - name: Save Python script output to a file
+      lineinfile:
+        path: /home/mmanoj/Ansible-P1/roles/windows_servers_role/files/output_file.txt
+        create: yes
+        line: "{{ python_script_output.stdout_lines | join('\n') }}"
+      when: python_script_output.rc == 0
+
+    - name: Fail the playbook if the command fails
+      fail:
+        msg: "Failed to run the Python script. Check the error message above."
+      when: python_script_output.rc != 0

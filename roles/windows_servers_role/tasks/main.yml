@@ -29,25 +29,24 @@
   include_tasks: SetupAutoWinDisk.yml
   when: include_setup_disk_tasks | default(false)
 
-# - name: Include tasks for running test.yml on a different server
-#   include_tasks: test.yml
-#   delegate_to: other_server
-#   when: include_test_tasks | default(false)
-#   ignore_errors: true  # Ignore errors to prevent stopping the playbook on failure
-#   register: test_result  # Register the result of the test.yml task
+- name: Include tasks for running run_py_script.yml on a different server
+  include_tasks: run_py_script.yml
+  delegate_to: python_servers
+  when: include_run_py_script_tasks | default(false)
+  ignore_errors: true
+  register: test_result
+
+- name: Include tasks for Add a line in DiskManagerConfig.xml (if test.yml succeeded)
+  include_tasks: AddXmlElement.yml
+  when: 
+    - include_AddXmlElement_tasks | default(false)
+    - test_result is defined
+    - test_result.failed == false
+    - test_result.rc == 0
 
 # - name: Include tasks for Add a line in DiskManagerConfig.xml
 #   include_tasks: AddXmlElement.yml
-#   when: 
-#     - include_AddXmlElement_tasks | default(false)
-#     - test_result is defined
-#     - test_result.failed == false  # Only execute if the test.yml task did not fail
-#     # - test_result.rc == 0  # Assumes that 0 indicates success in the return code of the test task
-
-
-- name: Include tasks for Add a line in DiskManagerConfig.xml
-  include_tasks: AddXmlElement.yml
-  when: include_AddXmlElement_tasks | default(false)
+#   when: include_AddXmlElement_tasks | default(false)
 
 - name: Include tasks for deleting/ removing cloned ansible project from Win
   include_tasks: RMGitCloneAnsible.yml

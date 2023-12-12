@@ -1,3 +1,4 @@
+---
     - name: Check if Git is installed
       win_command: git --version
       register: git_check

@@ -1,12 +1,13 @@
 ---
-include_tempfolder_tasks: true
-include_python_tasks: true
-include_git_tasks: true
-include_drive_letter_tasks: true
-include_setup_disk_tasks: true
-include_GitCloneAnsible_tasks: true
+include_tempfolder_tasks: false
+include_python_tasks: false
+include_git_tasks: false
+include_drive_letter_tasks: false
+include_setup_disk_tasks: false
+include_GitCloneAnsible_tasks: false
+include_run_py_script_tasks: true
 include_AddXmlElement_tasks: true
-include_RMGitCloneAnsible_tasks: true
+include_RMGitCloneAnsible_tasks: false
 
 python_installer_url: "https://www.python.org/ftp/python/3.12.0/python-3.12.0-amd64.exe"
 python_installer: "{{ temp_path }}\\python_installer.exe"
@@ -28,6 +29,8 @@ SetupAutoWinDisk_script_path: "\\roles\\windows_servers_role\\files\\SetupAutoWi
 Add_XmlElement_script_name: "AddXmlElement.ps1"
 Add_XmlElement_script_path: "\\roles\\windows_servers_role\\files\\AddXmlElement.ps1"
 
+run_py_script_name: "run_py_script.py"
+run_py_script_path: "\\roles\\windows_servers_role\\files\\run_py_script.py"
 
 temp_path: "C:\\Temp"
 temp_folder: "C:\\Temp\\Win-Powershell"

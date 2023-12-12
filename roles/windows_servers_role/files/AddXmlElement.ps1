@@ -4,6 +4,7 @@ $xmlFilePath = "E:\Impact360\Software\ContactStore\DiskManagerConfig.xml"
 # Backup the original file before making any modifications
 $backupFilePath = "$xmlFilePath.bak"
 Copy-Item -Path $xmlFilePath -Destination $backupFilePath -ErrorAction SilentlyContinue
+Write-Host "Backup taken: $backupFilePath"
 
 try {
     # Load the XML content
@@ -40,7 +41,6 @@ try {
 
             Write-Host "The XML file was successfully updated."
             Write-Host "Added new element: <$newElementName>$newElementValue</$newElementName>"
-            Write-Host "Backup taken: $backupFilePath"
             Remove-Item -Path $backupFilePath -ErrorAction SilentlyContinue
             Write-Host "Backup deleted successfully."
         } else {
