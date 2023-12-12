@@ -41,22 +41,6 @@ foreach ($diskNumber in $diskNumbers) {
 
 # Check if each disk is already initialized and has a drive letter
 foreach ($diskNumber in $diskNumbers) {
-    # ... (existing code)
-}
-
-# Create a new partition on each disk with specific drive letters
-foreach ($diskNumber in $diskNumbers) {
-    # ... (existing code)
-}
-
-# Format the volumes with NTFS file system and specific label
-foreach ($diskNumber in $diskNumbers) {
-    # ... (existing code)
-}
-
-
-# Check if each disk is already initialized and has a drive letter
-foreach ($diskNumber in $diskNumbers) {
     # Skip Disk 0 (OS disk)
     if ($diskNumber -eq 0) {
         Write-Host "Skipping initialization for Disk 0 (OS disk)."
@@ -65,7 +49,8 @@ foreach ($diskNumber in $diskNumbers) {
 
     # Skip if the disk is already initialized or has a drive letter
     if ($diskNumber -in $diskNumbersLetter.Keys) {
-        Write-Host "Skipping initialization for Disk $diskNumber (Already initialized or has a drive letter)."
+        $existingDriveLetter = $diskNumbersLetter[$diskNumber] -join ', '
+        Write-Host "Disk $diskNumber is already initialized with drive letter(s) $existingDriveLetter. Skipping initialization."
         continue
     }
 
@@ -77,13 +62,13 @@ foreach ($diskNumber in $diskNumbers) {
         Write-Host "Disk $diskNumber initialized."
     }
     else {
-        Write-Host "Disk $diskNumber is already initialized. Skipping initialization."
+        $existingDriveLetter = $disk | Get-Partition | Select-Object -ExpandProperty DriveLetter -Join ', '
+        Write-Host "Disk $diskNumber is already initialized with drive letter(s) $existingDriveLetter. Skipping initialization."
     }
 
     # Add the disk number to the diskNumbersLetter with an empty array for drive letters
     $diskNumbersLetter[$diskNumber] = @()
 }
-
 # Create a new partition on each disk with specific drive letters
 foreach ($diskNumber in $diskNumbers) {
     # Skip Disk 0 (OS disk)
@@ -105,16 +90,10 @@ foreach ($diskNumber in $diskNumbers) {
         Write-Host "Drive letter $nextAvailableDriveLetter is already in use for Disk $diskNumber. Skipping partition creation."
     }
     else {
-        # New-Partition -DiskNumber $diskNumber -UseMaximumSize -AssignDriveLetter
         $newPartition = New-Partition -DiskNumber $diskNumber -AssignDriveLetter -UseMaximumSize
         $driveLetter = $newPartition.DriveLetter
-        if ($driveLetter) {
-            Write-Host "Partition on Disk $($newPartition.DiskNumber) created with drive letter $driveLetter."
-            $diskNumbersLetter[$diskNumber] += $driveLetter  # Fix: Use the assigned drive letter, not the next available
-        }
-        else {
-            Write-Host "Error: Unable to retrieve the drive letter for Disk $diskNumber."
-        }
+        Write-Host "Partition on Disk $($newPartition.DiskNumber) created with drive letter $driveLetter."
+        $diskNumbersLetter[$diskNumber] += $driveLetter
     }
 }
 
