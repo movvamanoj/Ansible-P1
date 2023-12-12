@@ -38,11 +38,10 @@
         var: python_script_output.stdout_lines
       delegate_to: "{{ item }}"
       loop: "{{ groups['python_servers'] }}"
-      when: include_run_py_script_tasks | default(false)
 
     - name: Save Python script output to a file
       lineinfile:
-        path: "{{ temp_path }}/output_file.txt"
+        path: "{{ temp_path }}\\output_file.txt"
         create: yes
         line: "{{ python_script_output.stdout_lines | join('\n') }}"
       delegate_to: "{{ item }}"
