@@ -31,6 +31,30 @@ function Test-DriveLetterInUse {
     return $usedDriveLetters -contains $DriveLetter
 }
 
+# Display disk information before partition creation
+foreach ($diskNumber in $diskNumbers) {
+    $diskInfo = Get-Disk -Number $diskNumber
+    Write-Host "Disk $diskNumber Information:"
+    $diskInfo | Format-List
+    Write-Host ""
+}
+
+# Check if each disk is already initialized and has a drive letter
+foreach ($diskNumber in $diskNumbers) {
+    # ... (existing code)
+}
+
+# Create a new partition on each disk with specific drive letters
+foreach ($diskNumber in $diskNumbers) {
+    # ... (existing code)
+}
+
+# Format the volumes with NTFS file system and specific label
+foreach ($diskNumber in $diskNumbers) {
+    # ... (existing code)
+}
+
+
 # Check if each disk is already initialized and has a drive letter
 foreach ($diskNumber in $diskNumbers) {
     # Skip Disk 0 (OS disk)
