@@ -1,3 +1,4 @@
+# Set execution policy
 Set-ExecutionPolicy RemoteSigned -Scope Process -Force
 
 # Specify the disk numbers
@@ -18,17 +19,6 @@ function Get-NextAvailableDriveLetter {
     }
 
     throw "No available drive letters found."
-}
-
-# Function to test if a drive letter is in use for a specific disk
-function Test-DriveLetterInUse {
-    param (
-        [int]$DiskNumber,
-        [string]$DriveLetter
-    )
-
-    $usedDriveLetters = $diskNumbersLetter[$DiskNumber]
-    return $usedDriveLetters -contains $DriveLetter
 }
 
 # Display disk information before partition creation
@@ -62,13 +52,14 @@ foreach ($diskNumber in $diskNumbers) {
         Write-Host "Disk $diskNumber initialized."
     }
     else {
-        $existingDriveLetter = $disk | Get-Partition | Select-Object -ExpandProperty DriveLetter -Join ', '
+        $existingDriveLetter = $disk | Get-Partition | Where-Object { $_.DriveLetter -ne $null } | Select-Object -ExpandProperty DriveLetter -Join ', '
         Write-Host "Disk $diskNumber is already initialized with drive letter(s) $existingDriveLetter. Skipping initialization."
     }
 
     # Add the disk number to the diskNumbersLetter with an empty array for drive letters
     $diskNumbersLetter[$diskNumber] = @()
 }
+
 # Create a new partition on each disk with specific drive letters
 foreach ($diskNumber in $diskNumbers) {
     # Skip Disk 0 (OS disk)
@@ -92,7 +83,7 @@ foreach ($diskNumber in $diskNumbers) {
     else {
         $newPartition = New-Partition -DiskNumber $diskNumber -AssignDriveLetter -UseMaximumSize
         $driveLetter = $newPartition.DriveLetter
-        Write-Host "Partition on Disk $($newPartition.DiskNumber) created with drive letter $driveLetter."
+        Write-Host "Partition on Disk $diskNumber created with drive letter $driveLetter."
         $diskNumbersLetter[$diskNumber] += $driveLetter
     }
 }
