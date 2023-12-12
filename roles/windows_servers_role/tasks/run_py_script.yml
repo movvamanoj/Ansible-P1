@@ -53,6 +53,8 @@
       win_shell: Remove-Item -Path "{{ temp_path }}\{{ run_py_script_name }}" -Force
       args:
         executable: powershell.exe
+      delegate_to: "{{ item }}"
+      loop: "{{ groups['python_servers'] }}"
 
     - name: Delete Git cloned Ansible-p1 repository from Win
       win_shell: Remove-Item -Path "{{ temp_folder }}" -Recurse -Force

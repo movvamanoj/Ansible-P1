@@ -1,5 +1,5 @@
 # Path to the XML file
-$xmlFilePath = "E:\Impact360\Software\ContactStore\DiskManagerConfig.xml"
+$xmlFilePath = "P:\Impact360\Software\ContactStore\DiskManagerConfig.xml"
 
 # Backup the original file before making any modifications
 $backupFilePath = "$xmlFilePath.bak"
