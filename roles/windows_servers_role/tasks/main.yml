@@ -9,26 +9,25 @@
   include_tasks: SetTempFolder.yml
   when: include_tempfolder_tasks | default(true)
 
-# - name: Include tasks for Python on Windows
-#   include_tasks: PythonOnWin.yml
-#   when: include_python_tasks | default(false)
+- name: Include tasks for Python on Windows
+  include_tasks: PythonOnWin.yml
+  when: include_python_tasks | default(false)
 
-# - name: Include tasks for Git on Windows
-#   include_tasks: GitOnWin.yml
-#   when: include_git_tasks | default(false)
+- name: Include tasks for Git on Windows
+  include_tasks: GitOnWin.yml
+  when: include_git_tasks | default(false)
 
 - name: Include tasks for cloning ansible project from github
   include_tasks: GitCloneAnsible.yml
   when: include_GitCloneAnsible_tasks | default(false)
 
-# - name: Include tasks to change drive letter
-#   include_tasks: ChangeWinDriveLetter.yml
-#   when: include_drive_letter_tasks | default(false)
+- name: Include tasks to change drive letter
+  include_tasks: ChangeWinDriveLetter.yml
+  when: include_drive_letter_tasks | default(false)
 
-# - name: Include tasks for setting up Windows disk
-#   include_tasks: SetupAutoWinDisk.yml
-#   when: include_setup_disk_tasks | default(false)
-
+- name: Include tasks for setting up Windows disk
+  include_tasks: SetupAutoWinDisk.yml
+  when: include_setup_disk_tasks | default(false)
 
 - name: Include tasks for running run_py_script.yml on python_servers
   include_tasks: run_py_script.yml
@@ -44,36 +43,11 @@
     - test_result.failed == false
     - test_result.rc == 0
 
-# Tasks for deleting/removing cloned Ansible project from Windows
-- name: Include tasks for deleting/removing cloned Ansible project from Win
-  include_tasks: RMGitCloneAnsible.yml
-  when: include_RMGitCloneAnsible_tasks | default(false)
-
-# - name: Include tasks for running run_py_script.yml on python_servers
-#   include_tasks: run_py_script.yml
-#   when: include_run_py_script_tasks | default(false)
-#   ignore_errors: true
-#   run_once: true
-#   register: test_result
-
-# - name: Include tasks for running run_py_script.yml on python_servers
-#   include_tasks: run_py_script.yml
-#   when: include_run_py_script_tasks | default(false)
-#   ignore_errors: true
-#   register: test_result
-
-# - name: Include tasks for Add a line in DiskManagerConfig.xml (if test.yml succeeded)
-#   include_tasks: AddXmlElement.yml
-#   when: 
-#     - include_AddXmlElement_tasks | default(false)
-#     - test_result is defined
-#     - test_result.failed == false
-#     - test_result.rc == 0
-
 # - name: Include tasks for Add a line in DiskManagerConfig.xml
 #   include_tasks: AddXmlElement.yml
 #   when: include_AddXmlElement_tasks | default(false)
 
-# - name: Include tasks for deleting/ removing cloned ansible project from Win
-#   include_tasks: RMGitCloneAnsible.yml
-#   when: include_RMGitCloneAnsible_tasks | default(false)
+# Tasks for deleting/removing cloned Ansible project from Windows
+- name: Include tasks for deleting/removing cloned Ansible project from Win
+  include_tasks: RMGitCloneAnsible.yml
+  when: include_RMGitCloneAnsible_tasks | default(false)
