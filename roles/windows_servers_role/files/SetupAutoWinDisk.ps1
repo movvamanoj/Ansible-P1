@@ -42,7 +42,9 @@ foreach ($diskNumber in $diskNumbers) {
 
     # Skip if the disk is already initialized or has a drive letter
     if ($diskNumber -in $diskNumbersLetter.Keys) {
-        $existingDriveLetter = $diskNumbersLetter[$diskNumber] -join ', '
+        $existingDriveLetters = $diskNumbersLetter[$diskNumber]
+        $existingDriveLetters = $existingDriveLetters -ne 0 | Where-Object { $_ -ne '' }
+        $existingDriveLetter = $existingDriveLetters -join ', '
         Write-Host "Disk $diskNumber is already initialized with drive letter(s) $existingDriveLetter. Skipping initialization."
         continue
     }
@@ -67,7 +69,9 @@ foreach ($diskNumber in $diskNumbers) {
 
 # Display information about existing partitions
 foreach ($diskNumber in $diskNumbersLetter.Keys) {
-    $existingDriveLetter = $diskNumbersLetter[$diskNumber] -join ', '
+    $existingDriveLetters = $diskNumbersLetter[$diskNumber]
+    $existingDriveLetters = $existingDriveLetters -ne 0 | Where-Object { $_ -ne '' }
+    $existingDriveLetter = $existingDriveLetters -join ', '
     if ($existingDriveLetter) {
         $existingPartitions = Get-Partition -DiskNumber $diskNumber | Select-Object DiskNumber, DriveLetter, FileSystemLabel
         $existingPartitionsInfo = $existingPartitions | Format-Table -AutoSize | Out-String
@@ -86,7 +90,8 @@ foreach ($diskNumber in $diskNumbers) {
 
     # Skip if the disk already has a drive letter
     if ($diskNumber -in $diskNumbersLetter.Keys -and $diskNumbersLetter[$diskNumber]) {
-        Write-Host "Skipping partition creation for Disk $diskNumber (Already has a drive letter)."
+        $existingDriveLetter = $diskNumbersLetter[$diskNumber] -join ', '
+        Write-Host "Skipping partition creation for Disk $diskNumber (Already has drive letter(s) $existingDriveLetter)."
         continue
     }
 
@@ -99,8 +104,9 @@ foreach ($diskNumber in $diskNumbers) {
     else {
         $newPartition = New-Partition -DiskNumber $diskNumber -AssignDriveLetter -UseMaximumSize
         $driveLetter = $newPartition.DriveLetter
-        Write-Host "Partition on Disk $($newPartition.DiskNumber) created with drive letter $driveLetter."
+        Write-Host "Partition on Disk $diskNumber created with drive letter $driveLetter."
         $diskNumbersLetter[$diskNumber] += $driveLetter
+        Start-Sleep -Seconds 3  # Add a short delay to ensure that the information is updated
     }
 }
 
