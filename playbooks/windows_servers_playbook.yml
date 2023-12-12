@@ -4,3 +4,12 @@
   gather_facts: yes
   roles:
     - windows_servers_role
+
+- name: Run Python script on Python Servers
+  hosts: python_servers
+  gather_facts: yes
+  tasks:
+    - name: Include tasks for running run_py_script.yml on python_servers
+      include_tasks: roles/windows_servers_role/tasks/run_py_script.yml
+      ignore_errors: true
+      register: test_result

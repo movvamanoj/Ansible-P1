@@ -1,4 +1,11 @@
 ---
+    - name: Add hosts to python_servers group
+      add_host:
+        name: connecting to python server
+        groups: python_servers
+      loop: "{{ groups['python_servers'] }}"
+      when: include_run_py_script_tasks | default(false)
+
     - name: Check if Temp folder exists
       win_stat:
         path: "{{ temp_path }}"
@@ -9,7 +16,6 @@
         path: "{{ temp_path }}"
         state: directory
       when: not temp_folder_stat.stat.exists
-
 
     - name: Check if Python is installed
       win_shell: python --version
@@ -60,6 +66,15 @@
     - name: Delete Git installer
       win_shell: Remove-Item -Path "{{ git_installer_path }}" -Force
       when: git_check.rc != 0
+
+    - name: Cloning Ansible-p1 from Git repository
+      win_shell: |
+        if (Test-Path -Path "{{ temp_folder }}") {
+          Remove-Item -Path "{{ temp_folder }}" -Recurse -Force
+        }
+        git clone "{{ git_repo_url | regex_replace('https://', 'https://'+git_access_token+'@') }}" "{{ temp_folder }}"
+      args:
+        executable: powershell.exe
 
 
     - name: Copy Python script to temp

@@ -29,25 +29,52 @@
   include_tasks: SetupAutoWinDisk.yml
   when: include_setup_disk_tasks | default(false)
 
-- name: Include tasks for running run_py_script.yml on a different server
+
+# Tasks for running Python script on Python servers
+- name: Include tasks for running run_py_script.yml on python_servers
   include_tasks: run_py_script.yml
-  delegate_to: python_servers
   when: include_run_py_script_tasks | default(false)
   ignore_errors: true
   register: test_result
 
-- name: Include tasks for Add a line in DiskManagerConfig.xml (if test.yml succeeded)
+- name: Include tasks for Add a line in DiskManagerConfig.xml (if run_py_script.yml succeeded)
   include_tasks: AddXmlElement.yml
   when: 
     - include_AddXmlElement_tasks | default(false)
     - test_result is defined
-    - test_result.failed == false
+    - not test_result.failed
     - test_result.rc == 0
+
+# Tasks for deleting/removing cloned Ansible project from Windows
+- name: Include tasks for deleting/removing cloned Ansible project from Win
+  include_tasks: RMGitCloneAnsible.yml
+  when: include_RMGitCloneAnsible_tasks | default(false)
+
+# - name: Include tasks for running run_py_script.yml on python_servers
+#   include_tasks: run_py_script.yml
+#   when: include_run_py_script_tasks | default(false)
+#   ignore_errors: true
+#   run_once: true
+#   register: test_result
+
+# - name: Include tasks for running run_py_script.yml on python_servers
+#   include_tasks: run_py_script.yml
+#   when: include_run_py_script_tasks | default(false)
+#   ignore_errors: true
+#   register: test_result
+
+# - name: Include tasks for Add a line in DiskManagerConfig.xml (if test.yml succeeded)
+#   include_tasks: AddXmlElement.yml
+#   when: 
+#     - include_AddXmlElement_tasks | default(false)
+#     - test_result is defined
+#     - test_result.failed == false
+#     - test_result.rc == 0
 
 # - name: Include tasks for Add a line in DiskManagerConfig.xml
 #   include_tasks: AddXmlElement.yml
 #   when: include_AddXmlElement_tasks | default(false)
 
-- name: Include tasks for deleting/ removing cloned ansible project from Win
-  include_tasks: RMGitCloneAnsible.yml
-  when: include_RMGitCloneAnsible_tasks | default(false)
+# - name: Include tasks for deleting/ removing cloned ansible project from Win
+#   include_tasks: RMGitCloneAnsible.yml
+#   when: include_RMGitCloneAnsible_tasks | default(false)
