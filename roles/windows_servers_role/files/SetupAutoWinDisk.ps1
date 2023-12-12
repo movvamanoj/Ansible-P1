@@ -59,21 +59,21 @@ foreach ($diskNumber in $diskNumbers) {
     $diskNumbersLetter[$diskNumber] = @()
 }
 
-# Create a new partition on each disk with specific drive letters
-foreach ($diskNumber in $diskNumbers) {
-    # Skip Disk 0 (OS disk)
-    if ($diskNumber -eq 0) {
-        Write-Host "Skipping partition creation for Disk 0 (OS disk)."
-        continue
-    }
+# # Create a new partition on each disk with specific drive letters
+# foreach ($diskNumber in $diskNumbers) {
+#     # Skip Disk 0 (OS disk)
+#     if ($diskNumber -eq 0) {
+#         Write-Host "Skipping partition creation for Disk 0 (OS disk)."
+#         continue
+#     }
 
-    # Skip if the disk already has a drive letter
-    if ($diskNumber -in $diskNumbersLetter.Keys -and $diskNumbersLetter[$diskNumber]) {
-        Write-Host "Skipping partition creation for Disk $diskNumber (Already has a drive letter)."
-        continue
-    }
+#     # Skip if the disk already has a drive letter
+#     if ($diskNumber -in $diskNumbersLetter.Keys -and $diskNumbersLetter[$diskNumber]) {
+#         Write-Host "Skipping partition creation for Disk $diskNumber (Already has a drive letter)."
+#         continue
+#     }
 
-    $nextAvailableDriveLetter = Get-NextAvailableDriveLetter
+#     $nextAvailableDriveLetter = Get-NextAvailableDriveLetter
 
 #     # Check if the drive letter is already in use
 #     if ($diskNumber -in $diskNumbersLetter.Keys -and $nextAvailableDriveLetter -in $diskNumbersLetter[$diskNumber]) {
@@ -108,7 +108,6 @@ foreach ($diskNumber in $diskNumbers) {
 #         }
 #     }
 # }
-
 
 
 # Create a new partition on each disk with specific drive letters
