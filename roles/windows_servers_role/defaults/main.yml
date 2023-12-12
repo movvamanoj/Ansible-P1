@@ -26,8 +26,8 @@ ChangeWinDriveLetter_script_name: "ChangeWinDriveLetter.ps1"
 SetupAutoWinDisk_script_name: "SetupAutoWinDisk.ps1"
 SetupAutoWinDisk_script_path: "\\roles\\windows_servers_role\\files\\SetupAutoWinDisk.ps1"
 
-Add_XmlElement_script_name: "AddXmlElement.ps1"
-Add_XmlElement_script_path: "\\roles\\windows_servers_role\\files\\AddXmlElement.ps1"
+AddXmlElement_script_name: "AddXmlElement.ps1"
+AddXmlElement_script_path: "\\roles\\windows_servers_role\\files\\AddXmlElement.ps1"
 
 run_py_script_name: "run_py_script.py"
 run_py_script_path: "\\roles\\windows_servers_role\\files\\run_py_script.py"
