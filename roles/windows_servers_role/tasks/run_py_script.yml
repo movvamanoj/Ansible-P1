@@ -25,7 +25,7 @@
       when: include_run_py_script_tasks | default(false)
 
     - name: Execute Python script
-      win_shell: python "{{ temp_path }}//{{ run_py_script_path }}"
+      win_shell: python "{{ temp_path }}\{{ run_py_script_name }}"
       args:
         executable: powershell.exe
       register: python_script_output
