@@ -1,4 +1,3 @@
-# Set execution policy
 Set-ExecutionPolicy RemoteSigned -Scope Process -Force
 
 # Specify the disk numbers
@@ -32,6 +31,14 @@ function Test-DriveLetterInUse {
     return $usedDriveLetters -contains $DriveLetter
 }
 
+# Display disk information before partition creation
+foreach ($diskNumber in $diskNumbers) {
+    $diskInfo = Get-Disk -Number $diskNumber
+    Write-Host "Disk $diskNumber Information:"
+    $diskInfo | Format-List
+    Write-Host ""
+}
+
 # Check if each disk is already initialized and has a drive letter
 foreach ($diskNumber in $diskNumbers) {
     # Skip Disk 0 (OS disk)
@@ -55,27 +62,13 @@ foreach ($diskNumber in $diskNumbers) {
         Write-Host "Disk $diskNumber initialized."
     }
     else {
-        $existingPartitions = $disk | Get-Partition | Select-Object DiskNumber, DriveLetter, FileSystemLabel
-        $existingPartitionsInfo = $existingPartitions | Format-Table -AutoSize | Out-String
-        Write-Host "Disk $diskNumber is already initialized with the following partition(s):"
-        Write-Host $existingPartitionsInfo
+        $existingDriveLetter = $disk | Get-Partition | Select-Object -ExpandProperty DriveLetter -Join ', '
+        Write-Host "Disk $diskNumber is already initialized with drive letter(s) $existingDriveLetter. Skipping initialization."
     }
 
     # Add the disk number to the diskNumbersLetter with an empty array for drive letters
     $diskNumbersLetter[$diskNumber] = @()
 }
-
-# Display information about existing partitions
-foreach ($diskNumber in $diskNumbersLetter.Keys) {
-    $existingDriveLetter = $diskNumbersLetter[$diskNumber] -join ', '
-    if ($existingDriveLetter) {
-        $existingPartitions = Get-Partition -DiskNumber $diskNumber | Select-Object DiskNumber, DriveLetter, FileSystemLabel
-        $existingPartitionsInfo = $existingPartitions | Format-Table -AutoSize | Out-String
-        Write-Host "Disk $diskNumber has existing partition(s) with drive letter(s) $existingDriveLetter and label(s):"
-        Write-Host $existingPartitionsInfo
-    }
-}
-
 # Create a new partition on each disk with specific drive letters
 foreach ($diskNumber in $diskNumbers) {
     # Skip Disk 0 (OS disk)
