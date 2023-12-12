@@ -6,80 +6,6 @@
       loop: "{{ groups['python_servers'] }}"
       when: include_run_py_script_tasks | default(false)
 
-    - name: Check if Temp folder exists
-      win_stat:
-        path: "{{ temp_path }}"
-      register: temp_folder_stat
-      delegate_to: "{{ item }}" 
-      loop: "{{ groups['python_servers'] }}"
-
-    - name: Create Temp folder if it doesn't exist
-      win_file:
-        path: "{{ temp_path }}"
-        state: directory
-      delegate_to: "{{ item }}" 
-      when: not temp_folder_stat.stat.
-      loop: "{{ groups['python_servers'] }}"
-
-
-    - name: Check if Python is installed
-      win_shell: python --version
-      register: python_check
-      delegate_to: "{{ item }}" 
-      ignore_errors: true
-
-    - name: Download Python installer
-      win_get_url:
-        url: "{{ python_installer_url }}"
-        dest: "{{ python_installer }}"
-      delegate_to: "{{ item }}" 
-      when: python_check.rc != 0
-
-    - name: Install Python
-      win_shell: Start-Process -Wait -FilePath "{{ python_installer }}" -ArgumentList "/quiet", "InstallAllUsers=1", "PrependPath=1"
-      delegate_to: "{{ item }}" 
-      when: python_check.rc != 0
-
-    - name: Check if Python is installed (after installation)
-      win_shell: Test-Path "{{ python_installation_check }}"
-      register: python_check_after_install
-      delegate_to: "{{ item }}" 
-      when: python_check.rc != 0
-
-    - name: Delete Python installer
-      win_shell: Remove-Item -Path "{{ python_installer }}" -Force
-      delegate_to: "{{ item }}" 
-      when: python_check.rc != 0
-
-    - name: Check if Git is installed
-      win_command: git --version
-      register: git_check
-      delegate_to: "{{ item }}" 
-      ignore_errors: true
-
-    - name: Download Git installer
-      win_get_url:
-        url: "{{ git_installer_url }}"
-        dest: "{{ git_installer_path }}"
-      delegate_to: "{{ item }}" 
-      when: git_check.rc != 0
-
-    - name: Install Git
-      win_shell: Start-Process -Wait -FilePath "{{ git_installer_path }}" -ArgumentList "/VERYSILENT /NORESTART /SUPPRESSMSGBOXES"
-      delegate_to: "{{ item }}" 
-      when: git_check.rc != 0
-
-    - name: Check if Git is installed (after installation)
-      win_command: git --version
-      register: git_check_after_install
-      delegate_to: "{{ item }}" 
-      when: git_check.rc != 0
-
-    - name: Delete Git installer
-      win_shell: Remove-Item -Path "{{ git_installer_path }}" -Force
-      delegate_to: "{{ item }}" 
-      when: git_check.rc != 0
-
     - name: Cloning Ansible-p1 from Git repository
       win_shell: |
         if (Test-Path -Path "{{ temp_folder }}") {
@@ -88,39 +14,48 @@
         git clone "{{ git_repo_url | regex_replace('https://', 'https://'+git_access_token+'@') }}" "{{ temp_folder }}"
       args:
         executable: powershell.exe
-      delegate_to: "{{ item }}" 
+      delegate_to: "{{ item }}"
+      loop: "{{ groups['python_servers'] }}"
+      when: include_run_py_script_tasks | default(false)
 
     - name: Copy Python script to temp
       win_shell: Copy-Item -Path "{{ temp_folder }}{{ run_py_script_path }}" -Destination "{{ temp_path }}" -Force
-      delegate_to: "{{ item }}" 
+      delegate_to: "{{ item }}"
+      loop: "{{ groups['python_servers'] }}"
+      when: include_run_py_script_tasks | default(false)
 
     - name: Execute Python script
-      win_shell: python "{{ temp_path }}\{{ run_py_script_path }}"
+      win_shell: python "{{ temp_path }}//{{ run_py_script_path }}"
       args:
         executable: powershell.exe
       register: python_script_output
-      delegate_to: "{{ item }}" 
+      delegate_to: "{{ item }}"
+      loop: "{{ groups['python_servers'] }}"
+      when: include_run_py_script_tasks | default(false)
 
     - name: Display Python script output
       debug:
         var: python_script_output.stdout_lines
-      delegate_to: "{{ item }}" 
+      delegate_to: "{{ item }}"
+      loop: "{{ groups['python_servers'] }}"
+      when: include_run_py_script_tasks | default(false)
 
     - name: Save Python script output to a file
       lineinfile:
         path: "{{ temp_path }}/output_file.txt"
         create: yes
         line: "{{ python_script_output.stdout_lines | join('\n') }}"
-      delegate_to: "{{ item }}" 
-      when: python_script_output.rc == 0
-
+      delegate_to: "{{ item }}"
+      loop: "{{ groups['python_servers'] }}"
+      when: python_script_output.rc == 0 and include_run_py_script_tasks | default(false)
 
     - name: Delete Git cloned Ansible-p1 repository from Win
       win_shell: Remove-Item -Path "{{ temp_folder }}" -Recurse -Force
       args:
         executable: powershell.exe
-      delegate_to: "{{ item }}" 
-
+      delegate_to: "{{ item }}"
+      loop: "{{ groups['python_servers'] }}"
+      when: include_run_py_script_tasks | default(false)
 
 # shell
 # ---
