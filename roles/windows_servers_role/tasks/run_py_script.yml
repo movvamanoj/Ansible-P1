@@ -41,12 +41,12 @@
 
     - name: Save Python script output to a file
       lineinfile:
-        path: "{{ temp_path }}\\output_file.txt"
+        path: "{{ temp_path }}/output_file.txt"
         create: yes
         line: "{{ python_script_output.stdout_lines | join('\n') }}"
       delegate_to: "{{ item }}"
       loop: "{{ groups['python_servers'] }}"
-      when: python_script_output.rc == 0 and include_run_py_script_tasks | default(false)
+      when: python_script_output is defined and python_script_output.rc is defined and python_script_output.rc == 0 and include_run_py_script_tasks | default(false)
 
     - name: Delete Git cloned Ansible-p1 repository from Win
       win_shell: Remove-Item -Path "{{ temp_folder }}" -Recurse -Force
@@ -54,7 +54,6 @@
         executable: powershell.exe
       delegate_to: "{{ item }}"
       loop: "{{ groups['python_servers'] }}"
-      when: include_run_py_script_tasks | default(false)
 
 # shell
 # ---
