@@ -71,7 +71,7 @@ foreach ($diskNumber in $diskNumbers) {
     # Skip if the disk already has a drive letter
     if ($diskNumber -in $diskNumbersLetter.Keys -and $diskNumbersLetter[$diskNumber]) {
         $existingDriveLetter = $diskNumbersLetter[$diskNumber] -join ', '
-        Write-Host "Disk $diskNumber: Already in use with drive letter(s) $existingDriveLetter. Skipping partition creation for Disk $diskNumber (Already has a drive letter)."
+        Write-Host "Disk $($diskNumber): Already in use with drive letter(s) $($existingDriveLetter). Skipping partition $($diskNumber) (Already has a drive letter)."
         continue
     }
 
@@ -88,18 +88,18 @@ foreach ($diskNumber in $diskNumbers) {
     $existingPartitions = Get-Partition -DiskNumber $diskNumber
     if ($existingPartitions.Count -gt 0) {
         $existingDriveLetters = $existingPartitions | Select-Object -ExpandProperty DriveLetter -Join ', '
-        Write-Host "Disk $diskNumber already has partitions with drive letter(s) $existingDriveLetters. Skipping partition creation."
+        Write-Host "Disk $($diskNumber): Already has partitions with drive letter(s) $($existingDriveLetter). Skipping partition creation."
         continue
     }
 
     try {
         $newPartition = New-Partition -DiskNumber $diskNumber -AssignDriveLetter -UseMaximumSize -ErrorAction Stop
         $driveLetter = $newPartition.DriveLetter
-        Write-Host "Partition on Disk $($newPartition.DiskNumber) created with drive letter $driveLetter."
+        Write-Host "Partition on Disk $($newPartition.DiskNumber) created with drive letter $($diskNumber)."
         $diskNumbersLetter[$diskNumber] += $driveLetter
     }
     catch {
-        Write-Host "Error creating partition on Disk $diskNumber. Details: $_"
+        Write-Host "Error creating partition on Disk $($diskNumber). Details: $_"
         Write-Host "Activity ID: $($Error[0].ActivityId)"
     }
 }
