@@ -41,7 +41,7 @@ foreach ($diskNumber in $diskNumbers) {
     if ($diskNumber -in $diskNumbersLetter.Keys) {
         $existingDriveLetters = $disk | Get-Partition | Where-Object { $_.DriveLetter -ne $null } | Select-Object -ExpandProperty DriveLetter -Join ', '
         if ($existingDriveLetters) {
-            Write-Host "Disk $($diskNumber) is already initialized with drive letter(s) $($existingDriveLetter). Skipping initialization."
+            Write-Host "Disk $($diskNumber) is already initialized $existingDriveLetter. Skipping initialization."
         } else {
             Write-Host "Disk $($diskNumber) is already initialized. Skipping initialization."
         }
@@ -57,7 +57,7 @@ foreach ($diskNumber in $diskNumbers) {
     }
     else {
         $existingDriveLetter = $disk | Get-Partition | Where-Object { $_.DriveLetter -ne $null } | Select-Object -ExpandProperty DriveLetter -Join ', '
-        Write-Host "Disk $diskNumber is already initialized with drive letter(s) $($existingDriveLetter). Skipping initialization."
+        Write-Host "Disk $diskNumber is already initialized $existingDriveLetter. Skipping initialization."
     }
 
     # Add the disk number to the diskNumbersLetter with an empty array for drive letters
