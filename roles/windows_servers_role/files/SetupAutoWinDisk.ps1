@@ -71,7 +71,7 @@ foreach ($diskNumber in $diskNumbers) {
     # Skip if the disk already has a drive letter
     if ($diskNumber -in $diskNumbersLetter.Keys -and $diskNumbersLetter[$diskNumber]) {
         $existingDriveLetter = $diskNumbersLetter[$diskNumber] -join ', '
-        Write-Host "Disk $diskNumber: Already in Use with drive letter(s) $existingDriveLetter. Skipping partition creation for Disk $diskNumber (Already has a drive letter)."
+        Write-Host "Disk $($diskNumber): Already in Use with drive letter(s) $($existingDriveLetter). Skipping partition $($diskNumber) (Already has a drive letter)."
         continue
     }
 
