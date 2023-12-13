@@ -21,30 +21,43 @@ function Get-NextAvailableDriveLetter {
     throw "No available drive letters found."
 }
 
-# Function to test if a drive letter is in use for a specific disk
-function Test-DriveLetterInUse {
-    param (
-        [int]$DiskNumber,
-        [string]$DriveLetter
-    )
-
-    $usedDriveLetters = $diskNumbersLetter[$DiskNumber]
-    return $usedDriveLetters -contains $DriveLetter
+# Display disk information before partition creation
+foreach ($diskNumber in $diskNumbers) {
+    $diskInfo = Get-Disk -Number $diskNumber
+    Write-Host "Disk $diskNumber Information:"
+    $diskInfo | Format-List
+    Write-Host ""
 }
 
-# Display information about existing partitions
+# Check if each disk is already initialized and has a drive letter
 foreach ($diskNumber in $diskNumbers) {
-    $disk = Get-Disk -Number $diskNumber
-    $existingPartitions = $disk | Get-Partition | Where-Object { $_.DriveLetter -ne $null } | Select-Object DiskNumber, DriveLetter, FileSystemLabel
-
-    if ($existingPartitions) {
-        $existingPartitionsInfo = $existingPartitions | Format-Table -AutoSize | Out-String
-        Write-Host "Disk $diskNumber is already initialized with the following partition(s):"
-        Write-Host $existingPartitionsInfo
-        $diskNumbersLetter[$diskNumber] = $existingPartitions.DriveLetter
-    } else {
-        Write-Host "Disk $diskNumber is already initialized."
+    # Skip Disk 0 (OS disk)
+    if ($diskNumber -eq 0) {
+        Write-Host "Skipping initialization for Disk 0 (OS disk)."
+        continue
     }
+
+    # Skip if the disk is already initialized or has a drive letter
+    if ($diskNumber -in $diskNumbersLetter.Keys) {
+        $existingDriveLetter = $diskNumbersLetter[$diskNumber] -join ', '
+        Write-Host "Disk $diskNumber is already initialized with drive letter(s) $existingDriveLetter. Skipping initialization."
+        continue
+    }
+
+    $disk = Get-Disk -Number $diskNumber
+
+    # Check if the disk is already initialized
+    if ($disk.IsOffline -or ($disk.PartitionStyle -eq 'RAW')) {
+        Initialize-Disk -Number $diskNumber -PartitionStyle GPT
+        Write-Host "Disk $diskNumber initialized."
+    }
+    else {
+        $existingDriveLetter = $disk | Get-Partition | Where-Object { $_.DriveLetter -ne $null } | Select-Object -ExpandProperty DriveLetter -Join ', '
+        Write-Host "Disk $diskNumber is already initialized with drive letter(s) $existingDriveLetter. Skipping initialization."
+    }
+
+    # Add the disk number to the diskNumbersLetter with an empty array for drive letters
+    $diskNumbersLetter[$diskNumber] = @()
 }
 
 # Create a new partition on each disk with specific drive letters
@@ -57,8 +70,7 @@ foreach ($diskNumber in $diskNumbers) {
 
     # Skip if the disk already has a drive letter
     if ($diskNumber -in $diskNumbersLetter.Keys -and $diskNumbersLetter[$diskNumber]) {
-        $existingDriveLetter = $diskNumbersLetter[$diskNumber] -join ', '
-        Write-Host "Disk $diskNumber is already initialized with drive letter(s) $existingDriveLetter. Skipping partition creation."
+        Write-Host "Skipping partition creation for Disk $diskNumber (Already has a drive letter)."
         continue
     }
 
@@ -73,7 +85,6 @@ foreach ($diskNumber in $diskNumbers) {
         $driveLetter = $newPartition.DriveLetter
         Write-Host "Partition on Disk $diskNumber created with drive letter $driveLetter."
         $diskNumbersLetter[$diskNumber] += $driveLetter
-        Start-Sleep -Seconds 1  # Add a short delay to ensure that the information is updated
     }
 }
 
