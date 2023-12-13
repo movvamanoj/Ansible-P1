@@ -70,23 +70,31 @@ foreach ($diskNumber in $diskNumbers) {
 
     # Skip if the disk already has a drive letter
     if ($diskNumber -in $diskNumbersLetter.Keys -and $diskNumbersLetter[$diskNumber]) {
-        Write-Host "Skipping partition creation for Disk $diskNumber (Already has a drive letter)."
+        $existingDriveLetter = $diskNumbersLetter[$diskNumber] -join ', '
+        Write-Host "Disk $diskNumber: Already in Use with drive letter(s) $existingDriveLetter. Skipping partition creation for Disk $diskNumber (Already has a drive letter)."
         continue
     }
 
-    $nextAvailableDriveLetter = Get-NextAvailableDriveLetter
-
     # Check if the drive letter is already in use
-    if ($diskNumber -in $diskNumbersLetter.Keys -and $nextAvailableDriveLetter -in $diskNumbersLetter[$diskNumber]) {
-        Write-Host "Drive letter $nextAvailableDriveLetter is already in use for Disk $diskNumber. Skipping partition creation."
+    if ($diskNumber -in $diskNumbersLetter.Keys) {
+        $existingDriveLetters = $diskNumbersLetter[$diskNumber] -join ', '
+        if ($existingDriveLetters -contains $nextAvailableDriveLetter) {
+            Write-Host "Drive letter $nextAvailableDriveLetter is already in use for Disk $diskNumber. Skipping partition creation."
+            continue
+        }
     }
-    else {
-        $newPartition = New-Partition -DiskNumber $diskNumber -AssignDriveLetter -UseMaximumSize
+
+    try {
+        $newPartition = New-Partition -DiskNumber $diskNumber -AssignDriveLetter -UseMaximumSize -ErrorAction Stop
         $driveLetter = $newPartition.DriveLetter
         Write-Host "Partition on Disk $diskNumber created with drive letter $driveLetter."
-        $diskNumbersLetter[$diskNumber] += $driveLetter
+        $diskNumbersLetter[$diskNumber] += $driveLetter 
+    }
+    catch {
+        Write-Host "Error creating partition on Disk $diskNumber. Details: $_"
     }
 }
+
 
 # Format the volumes with NTFS file system and specific label
 foreach ($diskNumber in $diskNumbers) {
@@ -101,6 +109,9 @@ foreach ($diskNumber in $diskNumbers) {
         if (Get-Partition -DiskNumber $diskNumber | Where-Object { $_.DriveLetter -eq $driveLetter }) {
             Format-Volume -DriveLetter $driveLetter -FileSystem NTFS -NewFileSystemLabel "SC1CALLS" -AllocationUnitSize 65536 -Confirm:$false
             Write-Host "Formatted volume with drive letter $driveLetter and label SC1CALLS."
+             # Display volume information immediately after formatting
+             $volumeInfo = Get-Volume -DriveLetter $driveLetter | Format-List | Out-String
+             Write-Host $volumeInfo
         }
         else {
             Write-Host "Partition with drive letter $driveLetter not found on Disk $diskNumber. Skipping formatting."
