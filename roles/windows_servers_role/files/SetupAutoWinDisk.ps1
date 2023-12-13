@@ -57,7 +57,7 @@ foreach ($diskNumber in $diskNumbers) {
     }
     else {
         $existingDriveLetter = $disk | Get-Partition | Where-Object { $_.DriveLetter -ne $null } | Select-Object -ExpandProperty DriveLetter -Join ', '
-        Write-Host "Disk $diskNumber is already initialized $existingDriveLetter. Skipping initialization."
+        Write-Host "Disk $diskNumber is already initialized $($existingDriveLetter). Skipping initialization."
     }
 
     # Add the disk number to the diskNumbersLetter with an empty array for drive letters
@@ -75,7 +75,7 @@ foreach ($diskNumber in $diskNumbers) {
     # Skip if the disk already has a drive letter
     if ($diskNumber -in $diskNumbersLetter.Keys -and $diskNumbersLetter[$diskNumber]) {
         $existingDriveLetter = $diskNumbersLetter[$diskNumber] -join ', '
-        Write-Host "Disk $($diskNumber): Already in use with drive letter(s) $($existingDriveLetter). Skipping partition $($diskNumber) (Already has a drive letter)."
+        Write-Host "Disk $($diskNumber): Already in Use. Skipping partition $($diskNumber) (Already has a drive letter)."
         continue
     }
 
@@ -92,7 +92,7 @@ foreach ($diskNumber in $diskNumbers) {
     $existingPartitions = Get-Partition -DiskNumber $diskNumber
     if ($existingPartitions.Count -gt 0) {
         $existingDriveLetters = $existingPartitions | Select-Object -ExpandProperty DriveLetter -Join ', '
-        Write-Host "Disk $($diskNumber): Already has partitions with drive letter(s) $($existingDriveLetter). Skipping partition creation."
+        Write-Host "Disk $($diskNumber): Already has partitions $($existingDriveLetter). Skipping partition creation."
         continue
     }
 
