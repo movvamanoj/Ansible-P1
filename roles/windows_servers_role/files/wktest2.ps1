@@ -75,7 +75,7 @@
      # Skip if the disk already has a drive letter
      if ($diskNumber -in $diskNumbersLetter.Keys -and $diskNumbersLetter[$diskNumber]) {
          # Write-Host "Skipping partition creation for Disk $diskNumber (Already has a drive letter)."
-         Write-Host "Disk $($diskNumber): Already in Use. Skipping partition $($diskNumber) (Already has a drive letter)."
+         Write-Host "Disk $($diskNumber): Already in Use. Skipping partition On $($diskNumber) (Already has a drive letter)."
          continue
      }
 
@@ -87,7 +87,7 @@
      }
      else {
          New-Partition -DiskNumber $diskNumber -UseMaximumSize -DriveLetter $nextAvailableDriveLetter
-         Write-Host "Partition on Disk $diskNumber created with drive letter $driveLetter."
+         Write-Host "Partition on Disk $diskNumber created."
          $diskNumbersLetter[$diskNumber] += $nextAvailableDriveLetter
      }
  }
@@ -112,7 +112,7 @@
                   Write-Host $volumeInfo
              }
              else {
-                 Write-Host "Partition Already Done On Disk $diskNumber with Disk Letter $diskNumbersLetter test $driveLetter . Skipping formatting."
+                 Write-Host "Partition Already Done On Disk $diskNumber with Disk Letter . Skipping formatting."
              }
          }
      }
