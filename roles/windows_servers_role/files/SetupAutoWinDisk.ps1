@@ -10,9 +10,9 @@ $diskNumbersLetter = @{}
 # Function to get the next available drive letter
 function Get-NextAvailableDriveLetter {
     $usedDriveLetters = Get-Volume | Select-Object -ExpandProperty DriveLetter
-    $alphabet = 'G', 'D', 'E', 'F', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+    $alphabetOrder = 'G', 'A', 'B', 'D', 'E', 'F', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
 
-    foreach ($letter in $alphabet) {
+    foreach ($letter in $alphabetOrder) {
         if ($usedDriveLetters -notcontains $letter) {
             return $letter
         }
@@ -118,9 +118,12 @@ foreach ($diskNumber in $diskNumbers) {
     }
 
     foreach ($driveLetter in $diskNumbersLetter[$diskNumber]) {
+        $ErrorActionPreference = "SilentlyContinue"
         # Check if the partition exists before formatting
         if (Get-Partition -DiskNumber $diskNumber | Where-Object { $_.DriveLetter -eq $driveLetter }) {
             Format-Volume -DriveLetter $driveLetter -FileSystem NTFS -NewFileSystemLabel "SC1CALLS" -AllocationUnitSize 65536 -Confirm:$false
+            $ErrorActionPreference = "Continue"
+
             Write-Host "Formatted volume with drive letter $driveLetter and label SC1CALLS."
              # Display volume information immediately after formatting
              $volumeInfo = Get-Volume -DriveLetter $driveLetter | Format-List | Out-String
