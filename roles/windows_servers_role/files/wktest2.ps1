@@ -87,7 +87,7 @@
      }
      else {
          New-Partition -DiskNumber $diskNumber -UseMaximumSize -DriveLetter $nextAvailableDriveLetter
-         Write-Host "Partition on Disk $diskNumber created with drive letter $nextAvailableDriveLetter."
+         Write-Host "Partition on Disk $diskNumber created with drive letter $driveLetter."
          $diskNumbersLetter[$diskNumber] += $nextAvailableDriveLetter
      }
  }
@@ -112,7 +112,7 @@
                   Write-Host $volumeInfo
              }
              else {
-                 Write-Host "Partition with drive letter $driveLetter not found on Disk $diskNumber. Skipping formatting."
+                 Write-Host "Partition Already Done On Disk $diskNumber with Disk Letter $diskNumbersLetter test $driveLetter . Skipping formatting."
              }
          }
      }
