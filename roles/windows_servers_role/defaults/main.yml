@@ -1,7 +1,7 @@
 ---
-include_tempfolder_tasks: false
-include_python_tasks: false
-include_git_tasks: false
+include_tempfolder_tasks: true
+include_python_tasks: true
+include_git_tasks: true
 include_drive_letter_tasks: true
 include_setup_disk_tasks: true
 include_GitCloneAnsible_tasks: true
