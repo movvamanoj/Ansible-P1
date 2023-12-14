@@ -7,7 +7,6 @@
   when: include_run_py_script_tasks | default(false)
 
 - name: Execute Python script
-  become: true
   command: "{{ py_script_path }}"
   register: python_script_output
   delegate_to: "{{ item }}"
@@ -20,7 +19,6 @@
   when: python_script_output is defined
 
 - name: Save Python script output to a file
-  become: true
   copy:
     content: "{{ python_script_output.results[0].stdout_lines | join('\n') }}"
     dest: "{{ py_script_output_path }}"
@@ -50,49 +48,6 @@
 # py_script_path: "roles/acb_python_roles/files/ACB_WFO.py"
 # # py_script_output_path: "/home/mmanoj/Ansible-P1/windows_servers_roles/files/output_file.txt"
 # ansible_project_path: "/home/mmanoj/Ansible-P1"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
