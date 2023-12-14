@@ -2,10 +2,10 @@
 include_tempfolder_tasks: false
 include_python_tasks: false
 include_git_tasks: false
-include_drive_letter_tasks: true
+include_drive_letter_tasks: false
 include_setup_disk_tasks: true
 include_GitCloneAnsible_tasks: true
-include_run_py_script_tasks: true
+include_run_py_script_tasks: false
 include_AddXmlElement_tasks: false
 include_RMGitCloneAnsible_tasks: false
 
@@ -24,8 +24,8 @@ git_access_token: "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"
 ChangeWinDriveLetter_script_path: "\\roles\\windows_servers_role\\files\\ChangeWinDriveLetter.ps1"
 ChangeWinDriveLetter_script_name: "ChangeWinDriveLetter.ps1"
 
-SetupAutoWinDisk_script_name: "SetupAutoWinDisk.ps1"
-SetupAutoWinDisk_script_path: "\\roles\\windows_servers_role\\files\\SetupAutoWinDisk.ps1"
+SetupAutoWinDisk_script_name: "SetupAutoWinDiskTEST.ps1" #"SetupAutoWinDisk.ps1"
+SetupAutoWinDisk_script_path: "\\roles\\windows_servers_role\\files\\SetupAutoWinDiskTEST.ps1"
 
 AddXmlElement_script_name: "AddXmlElement.ps1"
 AddXmlElement_script_path: "\\roles\\windows_servers_role\\files\\AddXmlElement.ps1"
