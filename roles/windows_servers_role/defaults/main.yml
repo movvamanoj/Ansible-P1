@@ -31,7 +31,7 @@ AddXmlElement_script_path: "\\roles\\windows_servers_role\\files\\AddXmlElement.
 
 # run_py_script_name: "run_py_script.py"
 # run_py_script_path: "\\roles\\windows_servers_role\\files\\run_py_script.py"
-py_script_path: "Ansible-P1/roles/windows_servers_role/files/run_py_script.py"
-py_script_output_path: "Ansible-P1/roles/windows_servers_role/files/output_file.txt"
+py_script_path: "roles/windows_servers_role/files/run_py_script.py"
+py_script_output_path: "roles/windows_servers_role/files/output_file.txt"
 temp_path: "C:\\Temp"
 temp_folder: "C:\\Temp\\Win-Powershell"
