@@ -87,7 +87,7 @@
      }
      else {
          New-Partition -DiskNumber $diskNumber -UseMaximumSize -DriveLetter $nextAvailableDriveLetter
-         Write-Host "Partition on Disk $diskNumber created."
+         Write-Host "Already  Partition on Disk $diskNumber created."
          $diskNumbersLetter[$diskNumber] += $nextAvailableDriveLetter
      }
  }

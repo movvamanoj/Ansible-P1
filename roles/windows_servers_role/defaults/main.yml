@@ -24,8 +24,8 @@ git_access_token: "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"
 ChangeWinDriveLetter_script_path: "\\roles\\windows_servers_role\\files\\ChangeWinDriveLetter.ps1"
 ChangeWinDriveLetter_script_name: "ChangeWinDriveLetter.ps1"
 
-SetupAutoWinDisk_script_name: "wktest2.ps1" #"SetupAutoWinDisk.ps1"
-SetupAutoWinDisk_script_path: "\\roles\\windows_servers_role\\files\\wktest2.ps1"
+SetupAutoWinDisk_script_name: "SetupAutoWinDisk.ps1" #"SetupAutoWinDisk.ps1"
+SetupAutoWinDisk_script_path: "\\roles\\windows_servers_role\\files\\SetupAutoWinDisk.ps1"
 
 AddXmlElement_script_name: "AddXmlElement.ps1"
 AddXmlElement_script_path: "\\roles\\windows_servers_role\\files\\AddXmlElement.ps1"
