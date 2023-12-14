@@ -1,67 +1,189 @@
 ---
-    - name: Add hosts to python_servers group
-      add_host:
-        name: "{{ item }}"
-        groups: python_servers
-      loop: "{{ groups['python_servers'] }}"
-      when: include_run_py_script_tasks | default(false)
+- name: Add hosts to python_servers group
+  add_host:
+    name: "{{ item }}"
+    groups: python_servers
+  loop: "{{ groups['python_servers'] }}"
+  when: include_run_py_script_tasks | default(false)
 
-    - name: Cloning Ansible-p1 from Git repository
-      win_shell: |
-        if (Test-Path -Path "{{ temp_folder }}") {
-          Remove-Item -Path "{{ temp_folder }}" -Recurse -Force
-        }
-        git clone "{{ git_repo_url | regex_replace('https://', 'https://'+git_access_token+'@') }}" "{{ temp_folder }}"
-      args:
-        executable: powershell.exe
-      delegate_to: "{{ item }}"
-      loop: "{{ groups['python_servers'] }}"
-      when: include_run_py_script_tasks | default(false)
+- name: Execute Python script
+  become: true
+  command: "{{ py_script_path }}"
+  register: python_script_output
+  delegate_to: "{{ item }}"
+  loop: "{{ groups['python_servers'] }}"
+  when: include_run_py_script_tasks | default(false)
 
-    - name: Copy Python script to temp
-      win_shell: Copy-Item -Path "{{ temp_folder }}{{ run_py_script_path }}" -Destination "{{ temp_path }}" -Force
-      delegate_to: "{{ item }}"
-      loop: "{{ groups['python_servers'] }}"
-      when: include_run_py_script_tasks | default(false)
+- name: Debug Python script output
+  debug:
+    var: python_script_output
+  when: python_script_output is defined
 
-    - name: Execute Python script
-      win_shell: python "{{ temp_path }}\{{ run_py_script_name }}"
-      args:
-        executable: powershell.exe
-      register: python_script_output
-      delegate_to: "{{ item }}"
-      loop: "{{ groups['python_servers'] }}"
-      when: include_run_py_script_tasks | default(false)
+- name: Save Python script output to a file
+  become: true
+  copy:
+    content: "{{ python_script_output.results[0].stdout_lines | join('\n') }}"
+    dest: "{{ py_script_output_path }}"
+  delegate_to: localhost
+  loop: "{{ groups['python_servers'] }}"
+  when: python_script_output is defined
 
-    - name: Display Python script output
-      debug:
-        var: python_script_output.stdout_lines
-      delegate_to: "{{ item }}"
-      loop: "{{ groups['python_servers'] }}"
-      when: python_script_output is defined
 
-    - name: Save Python script output to a file
-      lineinfile:
-        path: "{{ temp_path }}\\output_file.txt"
-        create: yes
-        line: "{{ python_script_output.stdout_lines | join('\n') }}"
-      delegate_to: "{{ item }}"
-      loop: "{{ groups['python_servers'] }}"
-      when: python_script_output is defined and python_script_output.rc is defined and python_script_output.rc == 0 and include_run_py_script_tasks | default(false)
 
-    - name: Delete run_py_script.py Python script file
-      win_shell: Remove-Item -Path "{{ temp_path }}\{{ run_py_script_name }}" -Force
-      args:
-        executable: powershell.exe
-      delegate_to: "{{ item }}"
-      loop: "{{ groups['python_servers'] }}"
+# - name: Ensure Python script has execute permission
+#   become: true
+#   file:
+#     path: "{{ py_script_path }}"
+#     mode: "+x"
+#   delegate_to: "{{ item }}"
+#   loop: "{{ groups['python_servers'] }}"
+#   when: include_run_py_script_tasks | default(false)
 
-    - name: Delete Git cloned Ansible-p1 repository from Win
-      win_shell: Remove-Item -Path "{{ temp_folder }}" -Recurse -Force
-      args:
-        executable: powershell.exe
-      delegate_to: "{{ item }}"
-      loop: "{{ groups['python_servers'] }}"
+# # In Ansible 2.10 and later, modules are referred to by their Fully Qualified Collection Name (FQCN), such as ansible.builtin.command1. However, in earlier versions of Ansible, modules are referred to by their short name, such as command
+# - name: Running Python script
+#   command:
+#     chdir: "{{ ansible_project_path }}"
+#     _raw_params: python3 "{{ py_script_path }}"
+#   when: include_run_py_script_tasks | default(false)
+# ---
+# include_run_py_script_tasks: true
+# py_script_path: "roles/acb_python_roles/files/ACB_WFO.py"
+# # py_script_output_path: "/home/mmanoj/Ansible-P1/windows_servers_roles/files/output_file.txt"
+# ansible_project_path: "/home/mmanoj/Ansible-P1"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# - name: Add localhost to python_servers group
+#   add_host:
+#     name: localhost
+#     groups: python_servers
+#   when: include_run_py_script_tasks | default(false)
+
+# - name: Execute Python script on localhost
+#   command: "{{ py_script_path }}"
+#   register: python_script_output
+#   when: include_run_py_script_tasks | default(false)
+#   delegate_to: localhost
+
+# - name: Display Python script output
+#   debug:
+#     var: python_script_output.stdout_lines
+#   when: python_script_output is defined
+#   delegate_to: localhost  # Run on Ansible controller (localhost)
+
+# - name: Save Python script output to a file on localhost
+#   copy:
+#     content: "{{ python_script_output.stdout_lines | join('\n') }}"
+#     dest: "{{ py_script_output_path }}"
+#   when: python_script_output is defined and include_run_py_script_tasks | default(false)
+#   delegate_to: localhost  # Copy on Ansible controller (localhost)
+
+    # - name: Add hosts to python_servers group
+    #   add_host:
+    #     name: "{{ item }}"
+    #     groups: python_servers
+    #   loop: "{{ groups['python_servers'] }}"
+    #   when: include_run_py_script_tasks | default(false)
+
+#     - name: Cloning Ansible-p1 from Git repository
+#       win_shell: |
+#         if (Test-Path -Path "{{ temp_folder }}") {
+#           Remove-Item -Path "{{ temp_folder }}" -Recurse -Force
+#         }
+#         git clone "{{ git_repo_url | regex_replace('https://', 'https://'+git_access_token+'@') }}" "{{ temp_folder }}"
+#       args:
+#         executable: powershell.exe
+#       delegate_to: "{{ item }}"
+#       loop: "{{ groups['python_servers'] }}"
+#       when: include_run_py_script_tasks | default(false)
+
+#     - name: Copy Python script to temp
+#       win_shell: Copy-Item -Path "{{ temp_folder }}{{ run_py_script_path }}" -Destination "{{ temp_path }}" -Force
+#       delegate_to: "{{ item }}"
+#       loop: "{{ groups['python_servers'] }}"
+#       when: include_run_py_script_tasks | default(false)
+
+#     - name: Execute Python script
+#       win_shell: python "{{ temp_path }}\{{ run_py_script_name }}"
+#       args:
+#         executable: powershell.exe
+#       register: python_script_output
+#       delegate_to: "{{ item }}"
+#       loop: "{{ groups['python_servers'] }}"
+#       when: include_run_py_script_tasks | default(false)
+
+#     - name: Display Python script output
+#       debug:
+#         var: python_script_output.stdout_lines
+#       delegate_to: "{{ item }}"
+#       loop: "{{ groups['python_servers'] }}"
+#       when: python_script_output is defined
+
+#     - name: Save Python script output to a file
+#       lineinfile:
+#         path: "{{ temp_path }}\\output_file.txt"
+#         create: yes
+#         line: "{{ python_script_output.stdout_lines | join('\n') }}"
+#       delegate_to: "{{ item }}"
+#       loop: "{{ groups['python_servers'] }}"
+#       when: python_script_output is defined and python_script_output.rc is defined and python_script_output.rc == 0 and include_run_py_script_tasks | default(false)
+
+#     - name: Delete run_py_script.py Python script file
+#       win_shell: Remove-Item -Path "{{ temp_path }}\{{ run_py_script_name }}" -Force
+#       args:
+#         executable: powershell.exe
+#       delegate_to: "{{ item }}"
+#       loop: "{{ groups['python_servers'] }}"
+
+#     - name: Delete Git cloned Ansible-p1 repository from Win
+#       win_shell: Remove-Item -Path "{{ temp_folder }}" -Recurse -Force
+#       args:
+#         executable: powershell.exe
+#       delegate_to: "{{ item }}"
+#       loop: "{{ groups['python_servers'] }}"
 
 # shell
 # ---
@@ -86,3 +208,54 @@
 # - name: Display Python script output
 #   debug:
 #     var: python_script_output.stdout_lines
+
+
+# ---
+
+# - name: Execute Python script
+#   command: "{{ py_script_path }}"
+#   register: python_script_output
+
+# - name: Display running processes after executing Python script
+#   command: ps aux
+#   register: processes_after
+
+# - name: Display Python script output
+#   debug:
+#     var: python_script_output.stdout_lines
+
+# - name: Save Python script output to a file
+#   copy:
+#     content: "{{ python_script_output.stdout_lines | join('\n') }}"
+#     dest: "{{ py_script_output_path }}"
+
+
+# ---
+# - name: Add hosts to python_servers group
+#   add_host:
+#     name: "{{ item }}"
+#     groups: python_servers
+#   loop: "{{ groups['python_servers'] }}"
+#   when: include_run_py_script_tasks | default(false)
+
+# - name: Execute Python script
+#   command: python "{{ py_script_path }}"
+#   register: python_script_output
+#   delegate_to: "{{ item }}"
+#   loop: "{{ groups['python_servers'] }}"
+#   when: include_run_py_script_tasks | default(false)
+
+# - name: Display Python script output
+#   debug:
+#     var: python_script_output.stdout_lines
+#   delegate_to: "{{ item }}"
+#   loop: "{{ groups['python_servers'] }}"
+#   when: python_script_output is defined
+
+# - name: Save Python script output to a file
+#   copy:
+#     content: "{{ python_script_output.stdout_lines | join('\n') }}"
+#     dest: "{{ py_script_output_path }}"
+#   delegate_to: "{{ item }}"
+#   loop: "{{ groups['python_servers'] }}"
+#   when: python_script_output is defined and python_script_output.rc is defined and python_script_output.rc == 0 and include_run_py_script_tasks | default(false)
