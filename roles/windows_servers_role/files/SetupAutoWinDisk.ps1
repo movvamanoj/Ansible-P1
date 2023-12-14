@@ -20,19 +20,20 @@ $diskNumbersLetter = @{}
 
 #     throw "No available drive letters found."
 # }
-# Function to get the next available drive letter based on a predefined order, skipping used letters
+# Function to get the next available drive letter based on a predefined order
 function Get-NextAvailableDriveLetter {
-    $usedDriveLetters = Get-Volume | Where-Object { $_.DriveType -eq 'NoRootDirectory' } | Select-Object -ExpandProperty DriveLetter
     $alphabetOrder = 'G', 'A', 'B', 'D', 'E', 'F', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
 
     foreach ($letter in $alphabetOrder) {
-        if ($usedDriveLetters -notcontains $letter) {
+        $volume = Get-Volume -DriveLetter $letter -ErrorAction SilentlyContinue
+        if (-not $volume) {
             return $letter
         }
     }
 
     throw "No available drive letters found."
 }
+
 # Display disk information before partition creation
 foreach ($diskNumber in $diskNumbers) {
     $diskInfo = Get-Disk -Number $diskNumber
