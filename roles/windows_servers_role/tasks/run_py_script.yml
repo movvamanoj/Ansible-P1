@@ -6,6 +6,15 @@
   loop: "{{ groups['python_servers'] }}"
   when: include_run_py_script_tasks | default(false)
 
+- name: Ensure Python script has execute permission
+  become: true
+  file:
+    path: "{{ py_script_path }}"
+    mode: "+x"
+  delegate_to: "{{ item }}"
+  loop: "{{ groups['python_servers'] }}"
+  when: include_run_py_script_tasks | default(false)
+
 - name: Execute Python script
   command: "{{ py_script_path }}"
   register: python_script_output
