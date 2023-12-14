@@ -1,9 +1,23 @@
 ---
-  - name: Cloning Ansible-p1 from Git repository
+  - name: Clone or pull Ansible-p1 from Git repository
     win_shell: |
-      if (Test-Path -Path "{{ temp_folder }}") {
-        Remove-Item -Path "{{ temp_folder }}" -Recurse -Force
+      $repoPath = "{{ temp_folder }}"
+      if (Test-Path -Path $repoPath) {
+        # The repository already exists, perform a pull to get the latest changes
+        Set-Location -Path $repoPath
+        git pull
+      } else {
+        # The repository doesn't exist, perform a clone
+        git clone "{{ git_repo_url | regex_replace('https://', 'https://'+git_access_token+'@') }}" $repoPath
       }
-      git clone "{{ git_repo_url | regex_replace('https://', 'https://'+git_access_token+'@') }}" "{{ temp_folder }}"
     args:
       executable: powershell.exe
+
+  # - name: Cloning Ansible-p1 from Git repository
+  #   win_shell: |
+  #     if (Test-Path -Path "{{ temp_folder }}") {
+  #       Remove-Item -Path "{{ temp_folder }}" -Recurse -Force
+  #     }
+  #     git clone "{{ git_repo_url | regex_replace('https://', 'https://'+git_access_token+'@') }}" "{{ temp_folder }}"
+  #   args:
+  #     executable: powershell.exe
