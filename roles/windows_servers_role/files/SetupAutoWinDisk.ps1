@@ -88,26 +88,49 @@ foreach ($diskNumber in $diskNumbers) {
         $diskNumbersLetter[$diskNumber] += $nextAvailableDriveLetter
     }
 }
-# Format the volumes with NTFS file system and specific label
- foreach ($diskNumber in $diskNumbers) {
-        # Skip Disk 0 (OS disk)
-        if ($diskNumber -eq 0) {
-            Write-Host "Skipping formatting for Disk 0 (OS disk)."
-            continue
+foreach ($diskNumber in $diskNumbers) {
+    # Skip Disk 0 (OS disk)
+    if ($diskNumber -eq 0) {
+        Write-Host "Skipping formatting for Disk 0 (OS disk)."
+        continue
+    }
+
+    foreach ($driveLetter in $diskNumbersLetter[$diskNumber]) {
+        $partition = Get-Partition -DiskNumber $diskNumber | Where-Object { $_.DriveLetter -eq $driveLetter }
+
+        # Check if the partition exists before formatting
+        if ($partition) {
+            Format-Volume -DriveLetter $driveLetter -FileSystem NTFS -NewFileSystemLabel "SC1CALLS" -AllocationUnitSize 65536 -Confirm:$false -Force
+            Write-Host "Formatted volume with drive letter $driveLetter and label SC1CALLS."
+
+            $volumeInfo = Get-Volume -DriveLetter $driveLetter | Format-List
+            Write-Host $volumeInfo
         }
-   
-        foreach ($driveLetter in $diskNumbersLetter[$diskNumber]) {
-            # Check if the partition exists before formatting
-            if (Get-Partition -DiskNumber $diskNumber | Where-Object { $_.DriveLetter -eq $driveLetter }) {
-                # Format-Volume -DriveLetter $driveLetter -FileSystem NTFS -NewFileSystemLabel "SC1CALLS" -AllocationUnitSize 65536 -Confirm:$false
-                $formatCommand = "format $($driveLetter): /FS:NTFS /V:SC1CALLS /Q"
-                Start-Process -FilePath cmd.exe -ArgumentList "/c $formatCommand" -Wait -WindowStyle Hidden
-                Write-Host "Formatted volume with drive letter $driveLetter and label SC1CALLS."
-                 $volumeInfo = Get-Volume -DriveLetter $driveLetter | Format-List | Out-String
-                 Write-Host $volumeInfo
-            }
-            else {
-                Write-Host "Partition Already Done On Disk $diskNumber with Disk Letter . Skipping formatting."
-            }
+        else {
+            Write-Host "No partition found on Disk $diskNumber with Drive Letter $driveLetter. Skipping formatting."
         }
     }
+}
+
+
+# # Format the volumes with NTFS file system and specific label
+#  foreach ($diskNumber in $diskNumbers) {
+#         # Skip Disk 0 (OS disk)
+#         if ($diskNumber -eq 0) {
+#             Write-Host "Skipping formatting for Disk 0 (OS disk)."
+#             continue
+#         }
+   
+#         foreach ($driveLetter in $diskNumbersLetter[$diskNumber]) {
+#             # Check if the partition exists before formatting
+#             if (Get-Partition -DiskNumber $diskNumber | Where-Object { $_.DriveLetter -eq $driveLetter }) {
+#                 Format-Volume -DriveLetter $driveLetter -FileSystem NTFS -NewFileSystemLabel "SC1CALLS" -AllocationUnitSize 65536 -Confirm:$false
+#                 Write-Host "Formatted volume with drive letter $driveLetter and label SC1CALLS."
+#                  $volumeInfo = Get-Volume -DriveLetter $driveLetter | Format-List | Out-String
+#                  Write-Host $volumeInfo
+#             }
+#             else {
+#                 Write-Host "Partition Already Done On Disk $diskNumber with Disk Letter . Skipping formatting."
+#             }
+#         }
+#     }
