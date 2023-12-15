@@ -88,6 +88,8 @@ foreach ($diskNumber in $diskNumbers) {
         $diskNumbersLetter[$diskNumber] += $nextAvailableDriveLetter
     }
 }
+
+
 foreach ($diskNumber in $diskNumbers) {
     # Skip Disk 0 (OS disk)
     if ($diskNumber -eq 0) {
@@ -100,11 +102,23 @@ foreach ($diskNumber in $diskNumbers) {
 
         # Check if the partition exists before formatting
         if ($partition) {
-            Format-Volume -DriveLetter $driveLetter -FileSystem NTFS -NewFileSystemLabel "SC1CALLS" -AllocationUnitSize 65536 -Confirm:$false -Force
-            Write-Host "Formatted volume with drive letter $driveLetter and label SC1CALLS."
+            $volume = Get-Volume -DriveLetter $driveLetter
 
-            $volumeInfo = Get-Volume -DriveLetter $driveLetter | Format-List
-            Write-Host $volumeInfo
+            # Check if the volume is already formatted
+            if ($volume.FileSystem -eq 'NTFS') {
+                Write-Host "Volume with drive letter $driveLetter is already formatted as NTFS. Skipping formatting."
+            }
+            else {
+                # Format the volume if it's not already formatted
+                Format-Volume -DriveLetter $driveLetter -FileSystem NTFS -NewFileSystemLabel "SC1CALLS" -AllocationUnitSize 65536 -Confirm:$false -Force
+                Write-Host "Formatted volume with drive letter $driveLetter and label SC1CALLS."
+
+                # Set NoAutoMount attribute to prevent auto-mounting
+                Set-Partition -DriveLetter $driveLetter -NoAutoMount $true
+
+                $volumeInfo = Get-Volume -DriveLetter $driveLetter | Format-List
+                Write-Host $volumeInfo
+            }
         }
         else {
             Write-Host "No partition found on Disk $diskNumber with Drive Letter $driveLetter. Skipping formatting."
