@@ -100,7 +100,7 @@ foreach ($diskNumber in $diskNumbers) {
             # Check if the partition exists before formatting
             if (Get-Partition -DiskNumber $diskNumber | Where-Object { $_.DriveLetter -eq $driveLetter }) {
                 # Format-Volume -DriveLetter $driveLetter -FileSystem NTFS -NewFileSystemLabel "SC1CALLS" -AllocationUnitSize 65536 -Confirm:$false
-                $formatCommand = "format $driveLetter: /FS:NTFS /V:SC1CALLS /Q"
+                $formatCommand = "format $($driveLetter): /FS:NTFS /V:SC1CALLS /Q"
                 Start-Process -FilePath cmd.exe -ArgumentList "/c $formatCommand" -Wait -WindowStyle Hidden
                 Write-Host "Formatted volume with drive letter $driveLetter and label SC1CALLS."
                  $volumeInfo = Get-Volume -DriveLetter $driveLetter | Format-List | Out-String
